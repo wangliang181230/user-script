@@ -10,14 +10,14 @@
 // ==/UserScript==
 
 (function() {
-	'use strict'
+    'use strict'
 
-	const interval = setInterval(() => {
-		const ad = document.querySelector(".KxVKmLZM")
-		if (ad) {
-			ad.style.display = "none"
-			clearInterval(interval)
-			console.log("移除广告成功！！！")
-		}
-	}, 10)
+    const interval = setInterval(() => {
+        const ad = document.querySelector(".KxVKmLZM")
+        if (ad) {
+            ad.style.display = "none"
+            clearInterval(interval)
+            console.log("移除广告成功！！！")
+        }
+    }, 10)
 })();
