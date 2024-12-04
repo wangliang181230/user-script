@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         抢锚位（基于 `dev-sidecar` + `百度OCR`）
+// @name         船舶交通组织服务管理平台：自动抢锚位（基于 `dev-sidecar` + `百度OCR`）
 // @namespace    http://tampermonkey.net/
 // @version      2024-09-12
 // @description  给朋友编写的一个脚本，自动化抢锚位的工作。
