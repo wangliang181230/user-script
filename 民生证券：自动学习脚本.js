@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         民生证券-自动学习脚本
 // @namespace    http://tampermonkey.net/
-// @version      2024-11-04
+// @version      1.0.0
+// @since        2024-11-04
 // @description  民生证券：自动学习脚本
 // @author       王良
 // @match        http*://mszq.21tb.com/*

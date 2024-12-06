@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         CSDN：移除广告
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1_2024-12-06
+// @version      1.0.1
+// @since        2024/12/06
 // @description  百度翻译页面顶部总是出现广告，很烦，移除掉它。
 // @author       王良
 // @match        https://blog.csdn.net/*
