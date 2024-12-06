@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度翻译：移除广告
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1_2024-12-04
+// @version      1.0.0_2024-09-23
 // @description  百度翻译页面顶部总是出现广告，很烦，移除掉它。
 // @author       王良
 // @match        https://fanyi.baidu.com/*
@@ -12,26 +12,26 @@
 (function() {
     'use strict'
 
-    let count = 0
-
-    const interval = setInterval(() => {
-        let ad = document.querySelector(".KxVKmLZM")
-        if (ad && count === 0) {
-            ad.style.display = "none"
-            count++
-            console.log("移除顶部广告成功！！！")
+    let head
+    let interval = setInterval(() => {
+        head = document.getElementsByTagName("head")
+        if (!head || head.length === 0) {
+            return
         }
 
-        ad = document.querySelector("._m6jE1Mj")
-        if (ad && count === 1) {
-            ad.style.display = "none"
-            count++
-            console.log("移除广告成功！！！")
+        const styleElement = document.createElement("style")
+        styleElement.type = "text/css"
+        const cssContent = '.KxVKmLZM,._m6jE1Mj{display:none}'
+        if (styleElement.styleSheet) {
+            styleElement.styleSheet.cssText = cssContent // 兼容IE
+        } else {
+            styleElement.appendChild(document.createTextNode(cssContent))
         }
+        head[0].appendChild(styleElement)
 
-        if (count >= 2) {
-            clearInterval(interval)
-            console.log("广告全部移除，脚本停止！！！")
-        }
-    }, 10)
-})();
+        clearInterval(interval)
+        head = null
+        interval = null
+        console.log("广告已隐藏，脚本停止！！！")
+    }, 30)
+})()
