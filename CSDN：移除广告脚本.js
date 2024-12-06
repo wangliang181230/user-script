@@ -19,7 +19,7 @@
             return
         }
 
-        const selector = '#recommendAdBox,#asideWriteGuide,.programmer1Box,.toolbar-advert'
+        const selector = '#recommendAdBox,#asideWriteGuide,.programmer1Box,.toolbar-advert,.toolbar-btn-vip'
 
         const styleElement = document.createElement("style")
         styleElement.type = "text/css"
