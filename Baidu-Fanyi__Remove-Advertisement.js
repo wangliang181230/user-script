@@ -14,13 +14,13 @@
 
     let head
     let interval = setInterval(() => {
-        head = document.getElementsByTagName("head")
+        head = document.getElementsByTagName('head')
         if (!head || head.length === 0) {
             return
         }
 
-        const styleElement = document.createElement("style")
-        styleElement.type = "text/css"
+        const styleElement = document.createElement('style')
+        styleElement.type = 'text/css'
         const cssContent = '.KxVKmLZM,._m6jE1Mj{display:none}'
         if (styleElement.styleSheet) {
             styleElement.styleSheet.cssText = cssContent // 兼容IE
@@ -32,6 +32,6 @@
         clearInterval(interval)
         head = null
         interval = null
-        console.log("广告已隐藏，脚本停止！！！")
+        console.log('广告已隐藏，脚本停止！！！')
     }, 30)
 })()
