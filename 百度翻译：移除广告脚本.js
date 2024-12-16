@@ -20,10 +20,10 @@
             return
         }
 
-        const selector = '.KxVKmLZM' +
-              ',._m6jE1Mj' +
-              ',.URCZyDIb' +
-              ',.LsBEmsAO::after' + //
+        const selector = '.KxVKmLZM' + // 顶部：广告
+              ',._m6jE1Mj' + // 翻译下方：广告
+              ',.URCZyDIb' + // 头部：开通会员
+              ',.LsBEmsAO::after' + // 头部：充值返赚
               '';
 
         const styleElement = document.createElement('style')
