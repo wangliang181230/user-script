@@ -20,15 +20,17 @@
             return
         }
 
-        const selector = '.KxVKmLZM' + // 顶部：广告
-              ',._m6jE1Mj' + // 翻译下方：广告
-              ',.URCZyDIb' + // 头部：开通会员
-              ',.LsBEmsAO::after' + // 头部：充值返赚
-              '';
+        const selector = [
+            '.KxVKmLZM', // 顶部：广告
+            '._m6jE1Mj', // 翻译下方：广告
+            '.URCZyDIb', // 头部：开通会员
+            '.LsBEmsAO::after', // 头部：充值返赚
+            '.nhcoTCy6', // 全屏：广告
+        ]
 
         const styleElement = document.createElement('style')
         styleElement.type = 'text/css'
-        const cssContent = `${selector}{display:none}`
+        const cssContent = `${selector.join(', ')}{display:none}`
         if (styleElement.styleSheet) {
             styleElement.styleSheet.cssText = cssContent // 兼容IE
         } else {

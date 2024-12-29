@@ -20,11 +20,18 @@
             return
         }
 
-        const selector = '#recommendAdBox,#asideWriteGuide,.programmer1Box,.toolbar-advert,.toolbar-btn-vip,.sidetool-writeguide-box'
+        const selector = [
+            '#recommendAdBox',
+            '#asideWriteGuide',
+            '.programmer1Box',
+            '.toolbar-advert',
+            '.toolbar-btn-vip',
+            '.sidetool-writeguide-box',
+        ]
 
         const styleElement = document.createElement("style")
         styleElement.type = "text/css"
-        const cssContent = `${selector}{display:none}`
+        const cssContent = `${selector.join(', ')}{display:none}`
         if (styleElement.styleSheet) {
             styleElement.styleSheet.cssText = cssContent // 兼容IE
         } else {
