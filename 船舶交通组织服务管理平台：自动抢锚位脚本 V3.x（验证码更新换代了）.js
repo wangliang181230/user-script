@@ -27,6 +27,7 @@
                 // 正式提交：点击提交按钮
                 document.querySelector(".btn-submit").click();
             }
+            count++;
             return true;
         } catch (e) {
             if (!e.message.includes(" is null")) {
@@ -232,7 +233,7 @@
         }
 
         // 释放滑块
-        info("<---------- 释放滑块");
+        info(`<---------- 释放滑块（已刷新 ${count} 次，提交 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒）`);
         triggerMouseEvent(moveBtn0, 'mouseup', currentX - (Math.random() * 4 - 2).toFixed(), startY - (Math.random() * 20 - 10).toFixed());
 
         setTimeout(function () {
