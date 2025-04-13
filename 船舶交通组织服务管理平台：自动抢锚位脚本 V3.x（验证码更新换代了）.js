@@ -17,7 +17,12 @@
     let hitCount = 0;
     let startTime = null;
 
-    const clickSaveBtnForTest = false; // true：点击保存按钮测试 | false：点击提交按钮正式执行
+    let countConcat = 0;
+    let countSlider = 0;
+    let countRotate = 0;
+    let countWord = 0;
+
+    const clickSaveBtnForTest = true; // true：点击保存按钮测试 | false：点击提交按钮正式执行
     function clickSubmit () {
         try {
             if (clickSaveBtnForTest) {
@@ -236,7 +241,7 @@
 
         // 释放滑块
         const cost = (Date.now() - startTime) / 1000;
-        info(`<---------- 释放滑块（已刷新 ${count} 次，提交 ${hitCount} 次，可识别率：${(hitCount / count * 100).toFixed(1)} %；  总计耗时：${cost.toFixed(1)} 秒，提交速度：${(cost / hitCount).toFixed(1)} 秒/次）`);
+        info(`<---------- 释放滑块    --------    已刷新 ${count} 次（上下图 ${countConcat}、滑块 ${countSlider}、转圈 ${countRotate}、文字 ${countWord}），提交 ${hitCount} 次，可识别率：${(hitCount / count * 100).toFixed(1)} %；  总计耗时：${cost.toFixed(1)} 秒，提交速度：${(cost / hitCount).toFixed(1)} 秒/次`);
         triggerMouseEvent(moveBtn0, 'mouseup', currentX - (Math.random() * 4 - 2).toFixed(), startY - (Math.random() * 20 - 10).toFixed());
 
         setTimeout(function () {
@@ -252,6 +257,7 @@
 
     // 解析：拼图验证码（滑块）
     async function doParseSlider_1_slider () {
+        countSlider++;
         if (!sliderEnabled) {
             warn("❌ 已禁用 拼图验证码（抠图滑块 / Slider）");
             refresh();
@@ -343,6 +349,7 @@
 
     // 解析：拼图验证码（旋转）
     async function doParseSlider_2_rotate () {
+        countRotate++;
         warn("❌ 暂不支持 拼图验证码（旋转 / Rotate）");
         refresh();
         return false;
@@ -352,6 +359,7 @@
 
     // 解析：拼图验证码（上下图 / Concat）
     async function doParseSlider_3_concat () {
+        countConcat++;
         if (!concatEnabled) {
             warn("❌ 已禁用 拼图验证码（上下图 / Concat）");
             refresh();
@@ -460,6 +468,7 @@
 
     // 解析：点击文字验证码
     function doParseWordImageClick () {
+        countWord++;
         warn("❌ 暂不支持 点击文字验证码");
         refresh();
         return false;
@@ -640,6 +649,10 @@
 
                 count = 0;
                 hitCount = 0;
+                countConcat = 0;
+                countSlider = 0;
+                countRotate = 0;
+                countWord = 0;
                 startTime = null;
             } else {
                 warn(`❌ 提交了验证码，但失败了，错误信息：${errorMsg}`);
@@ -670,6 +683,10 @@
 
         count = 0;
         hitCount = 0;
+        countConcat = 0;
+        countSlider = 0;
+        countRotate = 0;
+        countWord = 0;
         startTime = null;
         return true;
     }
