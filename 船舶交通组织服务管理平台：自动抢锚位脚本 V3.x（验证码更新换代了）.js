@@ -15,6 +15,7 @@
 
     let count = 0;
     let hitCount = 0;
+    let missCount = 0;
     let startTime = null;
 
     let countConcat = 0;
@@ -241,7 +242,7 @@
 
         // 释放滑块
         const cost = (Date.now() - startTime) / 1000;
-        info(`<---------- 释放滑块    --------    已刷新 ${count} 次（上下图 ${countConcat}、滑块 ${countSlider}、转圈 ${countRotate}、文字 ${countWord}），提交 ${hitCount} 次，可识别率：${(hitCount / count * 100).toFixed(1)} %；  总计耗时：${cost.toFixed(1)} 秒，提交速度：${(cost / hitCount).toFixed(1)} 秒/次`);
+        info(`<---------- 释放滑块    --------    已刷新 ${count} 次（上下图 ${countConcat}、滑块 ${countSlider}、转圈 ${countRotate}、文字 ${countWord}），可识别率：${((hitCount + missCount) / count * 100).toFixed(1)} %；   识别成功 ${hitCount} 次，失败 ${missCount} 次，识别成功率：${(hitCount / (hitCount + missCount) * 100).toFixed(1)} %；   总计耗时：${cost.toFixed(1)} 秒，提交速度：${(cost / hitCount).toFixed(1)} 秒/次`);
         triggerMouseEvent(moveBtn0, 'mouseup', currentX - (Math.random() * 4 - 2).toFixed(), startY - (Math.random() * 20 - 10).toFixed());
 
         setTimeout(function () {
@@ -328,7 +329,8 @@
         }
 
         if (!slideX) {
-            warn(`未找到滑块坐标`);
+            missCount++;
+            warn(`❌ 未找到滑块坐标`);
             refresh();
             return false;
         }
@@ -373,7 +375,8 @@
         //debug(`查找切割点：findCutPoint([...], ${concatImgData.width}, ${isImage2 ? 0 : 47}, ${isImage2 ? 150 : 17});`);
         const cutX = window.findCutPoint(concatImgData.data, concatImgData.width, isImage2 ? 0 : 47, isImage2 ? 150 : 20);
         if (!cutX) {
-            warn("========> 警告：解析 拼图验证码（上下图 / Concat）未能成功，脚本代码需优化");
+            missCount++;
+            warn("❌ ========> 警告：解析 拼图验证码（上下图 / Concat）未能成功，脚本代码需优化");
             refresh();
             return false; // 未解析成功
         }
@@ -649,6 +652,7 @@
 
                 count = 0;
                 hitCount = 0;
+                missCount = 0;
                 countConcat = 0;
                 countSlider = 0;
                 countRotate = 0;
@@ -683,6 +687,7 @@
 
         count = 0;
         hitCount = 0;
+        missCount = 0;
         countConcat = 0;
         countSlider = 0;
         countRotate = 0;
