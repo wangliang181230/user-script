@@ -37,7 +37,7 @@
             return true;
         } catch (e) {
             if (!e.message.includes(" is null")) {
-                warn("clickSubmit 失败：", e);
+                warn("❌ clickSubmit 失败：", e);
             }
             return false;
         }
@@ -217,7 +217,7 @@
         const lastStep = steps + Math.random() * 10;
         for (let i = 0; i <= lastStep; i++) { // 加随机次数是为了模拟终点漂浮不定的效果，避免被判定为破解程序
             if (!window.doing || captchaBox.innerHTML.trim() === "") {
-                warn("<---------- 因状态异常，停止移动滑块");
+                warn("❌ <---------- 因状态异常，停止移动滑块");
                 return;
             }
 
@@ -231,7 +231,7 @@
                     return;
                 }
 
-                warn("移动滑块出现异常，重置滑块moveBtn、startX、startY");
+                warn("❌ 移动滑块出现异常，重置滑块moveBtn、startX、startY");
                 moveBtn0 = moveBtnNew;
                 startX = moveBtn0.getBoundingClientRect().left;
                 startY = moveBtn0.getBoundingClientRect().top;
@@ -256,111 +256,8 @@
     const sliderEnabled = true; // 是否识别抠图滑块验证码，true：需要识别 | false：不需要识别，跳过它
     const concatEnabled = true; // 是否识别上下图验证码，true：需要识别 | false：不需要识别，跳过它
 
-    // 解析：拼图验证码（滑块）
-    async function doParseSlider_1_slider () {
-        countSlider++;
-        if (!sliderEnabled) {
-            warn("❌ 已禁用 拼图验证码（抠图滑块 / Slider）");
-            refresh();
-            return false;
-        }
-
-        info("---> 解析：拼图验证码（抠图滑块 / Slider）");
-        // 加载图像到Canvas
-        const bgData = loadImage(document.getElementById("tianai-captcha-slider-bg-img"), "背景");
-        const slideData = loadImage(document.getElementById("tianai-captcha-slider-move-img"), "滑块");
-
-        const isImage2 = bgData.data[0] < 100;
-        if (isImage2) {
-            warn("❌ 暂不支持当前深色背景图片的 拼图验证码（抠图滑块 / Slider）");
-            refresh();
-            return false;
-        }
-
-        let slideY, slideX; // 滑块位置坐标
-
-        // 寻找滑块的Y坐标位置
-        for (let x = 0; x < slideData.width; x++) {
-            for (let y = 0; y < slideData.height; y++) {
-                const n = (y * slideData.width + x) * 4
-
-                const r = slideData.data[n]; // 红
-                const g = slideData.data[n + 1]; // 绿
-                const b = slideData.data[n + 2]; // 蓝
-                //const a = slideData.data[n + 3]; // 透明度
-
-                if (r !== 0 || g !== 0 || b !== 0) {
-                    slideY = y + 12;
-                    break;
-                }
-            }
-
-            if (slideY) {
-                break;
-            }
-        }
-
-        // 寻找滑块该移到的位置
-        for (let x = 50; x < bgData.width; x++) {
-            const n = (slideY * bgData.width + x) * 4
-
-            const r0 = bgData.data[n]; // 红
-            const g0 = bgData.data[n + 1]; // 绿
-            const b0 = bgData.data[n + 2]; // 蓝
-            //const a0 = bgData.data[n + 3]; // 透明度
-
-            if (isGray(r0, g0, b0)) {
-                let match = true;
-                for (let i = 1; i <= 40; i++) {
-                    const r = bgData.data[n + i * 4]; // 红
-                    const g = bgData.data[n + i * 4 + 1]; // 绿
-                    const b = bgData.data[n + i * 4 + 2]; // 蓝
-                    //const a = bgData.data[n + 3]; // 透明度
-
-                    if (!isSimilarColors(x, r0, g0, b0, x + i, r, g, b, 30)) {
-                        match = false;
-                    }
-                }
-                if (match) {
-                    slideX = x - 15;
-                    break;
-                }
-            }
-        }
-
-        if (!slideX) {
-            missCount++;
-            warn(`❌ 未找到滑块坐标`);
-            refresh();
-            return false;
-        }
-
-        info(`目标坐标：${slideX}, ${slideY}`);
-
-        const moveX = (slideX * ratio).toFixed();
-        info(`需移动滑块按钮 ${moveX} 像素（${slideX}）`);
-
-        return moveX;
-    }
-
-    function isGray (r, g, b) {
-        return r > 20 && r < 105 && g > 20 && g < 130 && b > 20 && b < 135;
-    }
-
-    ////////////---------------------------------------//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // 解析：拼图验证码（旋转）
-    async function doParseSlider_2_rotate () {
-        countRotate++;
-        warn("❌ 暂不支持 拼图验证码（旋转 / Rotate）");
-        refresh();
-        return false;
-    }
-
-    ////////////---------------------------------------//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     // 解析：拼图验证码（上下图 / Concat）
-    async function doParseSlider_3_concat () {
+    async function doParseSlider_1_concat () {
         countConcat++;
         if (!concatEnabled) {
             warn("❌ 已禁用 拼图验证码（上下图 / Concat）");
@@ -467,6 +364,109 @@
         return null;
     }
 
+    ////////////---------------------------------------//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 解析：拼图验证码（滑块）
+    async function doParseSlider_2_slider () {
+        countSlider++;
+        if (!sliderEnabled) {
+            warn("❌ 已禁用 拼图验证码（抠图滑块 / Slider）");
+            refresh();
+            return false;
+        }
+
+        info("---> 解析：拼图验证码（抠图滑块 / Slider）");
+        // 加载图像到Canvas
+        const bgData = loadImage(document.getElementById("tianai-captcha-slider-bg-img"), "背景");
+        const slideData = loadImage(document.getElementById("tianai-captcha-slider-move-img"), "滑块");
+
+        const isImage2 = bgData.data[0] < 100;
+        if (isImage2) {
+            warn("❌ 暂不支持当前深色背景图片的 拼图验证码（抠图滑块 / Slider）");
+            refresh();
+            return false;
+        }
+
+        let slideY, slideX; // 滑块位置坐标
+
+        // 寻找滑块的Y坐标位置
+        for (let x = 0; x < slideData.width; x++) {
+            for (let y = 0; y < slideData.height; y++) {
+                const n = (y * slideData.width + x) * 4
+
+                const r = slideData.data[n]; // 红
+                const g = slideData.data[n + 1]; // 绿
+                const b = slideData.data[n + 2]; // 蓝
+                //const a = slideData.data[n + 3]; // 透明度
+
+                if (r !== 0 || g !== 0 || b !== 0) {
+                    slideY = y + 12;
+                    break;
+                }
+            }
+
+            if (slideY) {
+                break;
+            }
+        }
+
+        // 寻找滑块该移到的位置
+        for (let x = 50; x < bgData.width; x++) {
+            const n = (slideY * bgData.width + x) * 4
+
+            const r0 = bgData.data[n]; // 红
+            const g0 = bgData.data[n + 1]; // 绿
+            const b0 = bgData.data[n + 2]; // 蓝
+            //const a0 = bgData.data[n + 3]; // 透明度
+
+            if (isGray(r0, g0, b0)) {
+                let match = true;
+                for (let i = 1; i <= 40; i++) {
+                    const r = bgData.data[n + i * 4]; // 红
+                    const g = bgData.data[n + i * 4 + 1]; // 绿
+                    const b = bgData.data[n + i * 4 + 2]; // 蓝
+                    //const a = bgData.data[n + 3]; // 透明度
+
+                    if (!isSimilarColors(x, r0, g0, b0, x + i, r, g, b, 30)) {
+                        match = false;
+                    }
+                }
+                if (match) {
+                    slideX = x - 15;
+                    break;
+                }
+            }
+        }
+
+        if (!slideX) {
+            missCount++;
+            warn(`❌ 未找到滑块坐标`);
+            refresh();
+            return false;
+        }
+
+        info(`目标坐标：${slideX}, ${slideY}`);
+
+        const moveX = (slideX * ratio).toFixed();
+        info(`需移动滑块按钮 ${moveX} 像素（${slideX}）`);
+
+        return moveX;
+    }
+
+    function isGray (r, g, b) {
+        return r > 20 && r < 105 && g > 20 && g < 130 && b > 20 && b < 135;
+    }
+
+    ////////////---------------------------------------//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 解析：拼图验证码（旋转）
+    async function doParseSlider_3_rotate () {
+        countRotate++;
+        warn("❌ 暂不支持 拼图验证码（旋转 / Rotate）");
+        refresh();
+        return false;
+    }
+
     ////////////=======================================//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 解析：点击文字验证码
@@ -490,32 +490,32 @@
             if (tipDiv.innerText === "拖动滑块完成拼图") {
                 let imgDiv
 
+                // 上下图
+                imgDiv = document.getElementById("tianai-captcha-slider-concat-img-div");
+                if (imgDiv) {
+                    return await doParseSlider_1_concat();
+                }
+
                 // 滑块 和 旋转
                 imgDiv = document.getElementById("tianai-captcha-slider-img-div");
                 if (imgDiv) {
                     if (imgDiv.classList.contains("slider-img-div")) {
-                        return await doParseSlider_1_slider();
+                        return await doParseSlider_2_slider();
                     } else if (imgDiv.classList.contains("rotate-img-div")) {
-                        return await doParseSlider_2_rotate();
+                        return await doParseSlider_3_rotate();
                     }
                 }
 
-                // 上下图
-                imgDiv = document.getElementById("tianai-captcha-slider-concat-img-div");
-                if (imgDiv) {
-                    return await doParseSlider_3_concat();
-                } else {
-                    warn("<--- 未识别到 已知的 拼图验证码");
-                    refresh();
-                    return false;
-                }
+                warn("❌ <--- 未识别到 已知的 拼图验证码");
+                refresh();
+                return false;
             } else {
-                warn("<--- 未识别到 拼图验证码");
+                warn("❌ <--- 未识别到 拼图验证码");
                 refresh();
                 return false;
             }
         } catch (e) {
-            warn("<--- 异常：拼图验证码，error:", e);
+            warn("❌ <--- 异常：拼图验证码，error:", e);
             refresh();
             return false;
         }
@@ -532,11 +532,11 @@
             if (document.getElementById("tianai-captcha-click-track-font").innerText === "请依次点击:") {
                 return doParseWordImageClick();
             } else {
-                warn("<--- 未识别到 点击文字验证码");
+                warn("❌ <--- 未识别到 点击文字验证码");
                 return false;
             }
         } catch (e) {
-            warn("<--- 异常：点击文字验证码，error:", e);
+            warn("❌ <--- 异常：点击文字验证码，error:", e);
             return false;
         }
     }
@@ -563,7 +563,7 @@
             count++;
             return true;
         } catch (e) {
-            warn("刷新出现异常：", e);
+            warn("❌ 刷新出现异常：", e);
             window.stoping = false;
             return false;
         }
@@ -574,7 +574,7 @@
             document.querySelector(".ant-modal-close-x").click();
             return true;
         } catch (e) {
-            warn("关闭验证码失败：", e);
+            warn("❌ 关闭验证码失败：", e);
             return false;
         }
     }
@@ -749,7 +749,7 @@
                 });
             }
         } catch (e) {
-            warn("显示通知失败：", e);
+            warn("❌ 显示通知失败：", e);
         }
 
         if (needAlert !== false) {
