@@ -17,7 +17,7 @@
     let startTime = null;
     let endTime = null;
 
-    const clickSaveBtnForTest = true; // true：点击保存按钮测试 | false：点击提交按钮正式执行
+    const clickSaveBtnForTest = false; // true：点击保存按钮测试 | false：点击提交按钮正式执行
     function clickSubmit () {
         try {
             if (clickSaveBtnForTest) {
@@ -767,5 +767,5 @@
     init();
 
     // 自动开始脚本，方便测试
-    setTimeout(start, 1000);
+    //setTimeout(start, 1000);
 })();
