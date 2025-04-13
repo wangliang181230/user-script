@@ -84,6 +84,8 @@
                 }, 100);
                 return;
             }
+        } else {
+            checkResult()
         }
 
         window.doing = false;
@@ -234,7 +236,7 @@
 
         // 释放滑块
         const cost = (Date.now() - startTime) / 1000;
-        info(`<---------- 释放滑块（已刷新 ${count} 次，提交 ${hitCount} 次，总计耗时：${cost.toFixed(2)} 秒，提交速度：${(cost / hitCount).toFixed(2)} 秒/次）`);
+        info(`<---------- 释放滑块（已刷新 ${count} 次，提交 ${hitCount} 次，可识别率：${(hitCount / count * 100).toFixed(1)} %；  总计耗时：${cost.toFixed(1)} 秒，提交速度：${(cost / hitCount).toFixed(1)} 秒/次）`);
         triggerMouseEvent(moveBtn0, 'mouseup', currentX - (Math.random() * 4 - 2).toFixed(), startY - (Math.random() * 20 - 10).toFixed());
 
         setTimeout(function () {
@@ -251,7 +253,7 @@
     // 解析：拼图验证码（滑块）
     async function doParseSlider_1_slider () {
         if (!sliderEnabled) {
-            warn("❌已禁用 拼图验证码（抠图滑块 / Slider）");
+            warn("❌ 已禁用 拼图验证码（抠图滑块 / Slider）");
             refresh();
             return false;
         }
@@ -263,7 +265,7 @@
 
         const isImage2 = bgData.data[0] < 100;
         if (isImage2) {
-            warn("❌暂不支持当前深色背景图片的 拼图验证码（抠图滑块 / Slider）");
+            warn("❌ 暂不支持当前深色背景图片的 拼图验证码（抠图滑块 / Slider）");
             refresh();
             return false;
         }
@@ -341,7 +343,7 @@
 
     // 解析：拼图验证码（旋转）
     async function doParseSlider_2_rotate () {
-        warn("❌暂不支持 拼图验证码（旋转 / Rotate）");
+        warn("❌ 暂不支持 拼图验证码（旋转 / Rotate）");
         refresh();
         return false;
     }
@@ -351,7 +353,7 @@
     // 解析：拼图验证码（上下图 / Concat）
     async function doParseSlider_3_concat () {
         if (!concatEnabled) {
-            warn("❌已禁用 拼图验证码（上下图 / Concat）");
+            warn("❌ 已禁用 拼图验证码（上下图 / Concat）");
             refresh();
             return false;
         }
@@ -458,7 +460,7 @@
 
     // 解析：点击文字验证码
     function doParseWordImageClick () {
-        warn("❌暂不支持 点击文字验证码");
+        warn("❌ 暂不支持 点击文字验证码");
         refresh();
         return false;
     }
