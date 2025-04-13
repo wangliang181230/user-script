@@ -14,8 +14,8 @@
     'use strict';
 
     let count = 0;
+    let hitCount = 0;
     let startTime = null;
-    let endTime = null;
 
     const clickSaveBtnForTest = false; // true：点击保存按钮测试 | false：点击提交按钮正式执行
     function clickSubmit () {
@@ -181,7 +181,7 @@
     }
 
     async function moveBtn (targetX) {
-        endTime = Date.now();
+        hitCount++;
 
         const captchaBox = document.getElementById("captchaBox");
         if (captchaBox && captchaBox.innerHTML.trim() === "") {
@@ -632,11 +632,11 @@
                 // 停止识别验证码
                 stop();
                 // 提示已被抢走
-                showMsg(`❌ 很遗憾，该锚位已被其他人抢走了，现已停止识别验证码，有需要时再按F2开启！！！！！！此次总计刷新了验证码图片次数：${count} 次，总计耗时：${(endTime - startTime) / 1000} 秒`);
+                showMsg(`❌ 很遗憾，该锚位已被其他人抢走了，现已停止识别验证码，有需要时再按F2开启！！！！！！此次总计刷新了验证码图片次数：${count} 次，提交了 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒`);
 
                 count = 0;
+                hitCount = 0;
                 startTime = null;
-                endTime = null;
             } else {
                 warn(`❌ 提交了验证码，但失败了，错误信息：${errorMsg}`);
             }
@@ -648,7 +648,7 @@
     }
 
     function checkResult () {
-        if (count === 0 || endTime === null) return false;
+        if (count === 0 || hitCount === 0) return false;
 
         let title;
         let logFun;
@@ -662,11 +662,11 @@
             logFun = warn;
         }
 
-        logFun(`${title}\n总计刷新了验证码图片：${count} 次，总计耗时：${(endTime - startTime) / 1000} 秒`);
+        logFun(`${title}\n总计刷新了验证码图片：${count} 次，提交了 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒`);
 
         count = 0;
+        hitCount = 0;
         startTime = null;
-        endTime = null;
         return true;
     }
 
