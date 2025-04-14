@@ -432,7 +432,7 @@
                     }
                 }
                 if (match) {
-                    slideX = x - 10;
+                    slideX = x - 5;
                     break;
                 }
             }
