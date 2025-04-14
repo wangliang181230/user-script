@@ -16,13 +16,24 @@
     let count = 0;
     let hitCount = 0;
     let missCount = 0;
-    let startTime = null;
-
     let countConcat = 0;
     let countSlider = 0;
     let countRotate = 0;
     let countWord = 0;
+    let startTime = null;
 
+    function resetValues () {
+        count = 0;
+        hitCount = 0;
+        missCount = 0;
+        countConcat = 0;
+        countSlider = 0;
+        countRotate = 0;
+        countWord = 0;
+        startTime = null;
+    }
+
+    const random = 1;
     const clickSaveBtnForTest = false; // true：点击保存按钮测试 | false：点击提交按钮正式执行
     function clickSubmit () {
         try {
@@ -208,23 +219,23 @@
 
         // 触发按下
         info("----------> 按下滑块");
-        triggerMouseEvent(moveBtn0, 'mousedown', startX - (Math.random() * -10).toFixed(), startY - (Math.random() * -10).toFixed());
+        triggerMouseEvent(moveBtn0, 'mousedown', startX - random * (Math.random() * -10).toFixed(), startY - random * (Math.random() * -10).toFixed());
 
         // 分段移动
         info("----------- 开始移动滑块");
         let currentX = startX;
-        const steps = 50 - (Math.random() * 20 - 10).toFixed();
-        const lastStep = steps + Math.random() * 10;
+        const steps = 50 - random * (Math.random() * 20 - 10).toFixed();
+        const lastStep = steps + random * Math.random() * 10;
         for (let i = 0; i <= lastStep; i++) { // 加随机次数是为了模拟终点漂浮不定的效果，避免被判定为破解程序
             if (!window.doing || captchaBox.innerHTML.trim() === "") {
                 warn("❌ <---------- 因状态异常，停止移动滑块");
                 return;
             }
 
-            currentX = startX + (targetX * (i > steps ? steps : i) / steps) + (i >= steps - 20 ? (Math.random() * 4 - 2) : 0);
+            currentX = startX + (targetX * (i > steps ? steps : i) / steps) + (i >= steps - 20 ? random * (Math.random() * 4 - 2) : 0);
             try {
                 //debug(`移动滑块: i = ${i}, currentX = ${currentX.toFixed()}`);
-                triggerMouseEvent(document, 'mousemove', currentX, startY - (Math.random() * 20 - 10).toFixed()); // 添加随机上下浮动，避免被发现为破解程序
+                triggerMouseEvent(document, 'mousemove', currentX, startY - random * (Math.random() * 20 - 10).toFixed()); // 添加随机上下浮动，避免被发现为破解程序
             } catch (e) {
                 const moveBtnNew = document.getElementById('tianai-captcha-slider-move-btn');
                 if (moveBtnNew == null) {
@@ -237,13 +248,13 @@
                 startY = moveBtn0.getBoundingClientRect().top;
             }
             // 添加延迟
-            await new Promise(resolve => setTimeout(resolve, 15 - (Math.random() * 10 - 5).toFixed()));
+            await new Promise(resolve => setTimeout(resolve, 15 - random * (Math.random() * 10 - 5).toFixed()));
         }
 
         // 释放滑块
         const cost = (Date.now() - startTime) / 1000;
         info(`<---------- 释放滑块    --------    已刷新 ${count} 次（上下图 ${countConcat}、滑块 ${countSlider}、转圈 ${countRotate}、文字 ${countWord}），可识别率：${((hitCount + missCount) / count * 100).toFixed(1)} %；   识别成功 ${hitCount} 次，失败 ${missCount} 次，识别成功率：${(hitCount / (hitCount + missCount) * 100).toFixed(1)} %；   总计耗时：${cost.toFixed(1)} 秒，提交速度：${(cost / hitCount).toFixed(1)} 秒/次`);
-        triggerMouseEvent(moveBtn0, 'mouseup', currentX - (Math.random() * 4 - 2).toFixed(), startY - (Math.random() * 20 - 10).toFixed());
+        triggerMouseEvent(moveBtn0, 'mouseup', currentX - random * (Math.random() * 4 - 2).toFixed(), startY - random * (Math.random() * 20 - 10).toFixed());
 
         setTimeout(function () {
             checkMoveBtn();
@@ -253,8 +264,8 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const ratio = 0.5;
+    const concatEnabled = false; // 是否识别上下图验证码，true：需要识别 | false：不需要识别，跳过它
     const sliderEnabled = true; // 是否识别抠图滑块验证码，true：需要识别 | false：不需要识别，跳过它
-    const concatEnabled = true; // 是否识别上下图验证码，true：需要识别 | false：不需要识别，跳过它
 
     // 解析：拼图验证码（上下图 / Concat）
     async function doParseSlider_1_concat () {
@@ -650,14 +661,7 @@
                 // 提示已被抢走
                 showMsg(`❌ 很遗憾，该锚位已被其他人抢走了，现已停止识别验证码，有需要时再按F2开启！！！！！！此次总计刷新了验证码图片次数：${count} 次，提交了 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒`);
 
-                count = 0;
-                hitCount = 0;
-                missCount = 0;
-                countConcat = 0;
-                countSlider = 0;
-                countRotate = 0;
-                countWord = 0;
-                startTime = null;
+                resetValues();
             } else {
                 warn(`❌ 提交了验证码，但失败了，错误信息：${errorMsg}`);
             }
@@ -685,14 +689,7 @@
 
         logFun(`${title}\n总计刷新了验证码图片：${count} 次，提交了 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒`);
 
-        count = 0;
-        hitCount = 0;
-        missCount = 0;
-        countConcat = 0;
-        countSlider = 0;
-        countRotate = 0;
-        countWord = 0;
-        startTime = null;
+        resetValues();
         return true;
     }
 
