@@ -23,7 +23,7 @@
     let countRotate = 0;
     let countWord = 0;
 
-    const clickSaveBtnForTest = true; // true：点击保存按钮测试 | false：点击提交按钮正式执行
+    const clickSaveBtnForTest = false; // true：点击保存按钮测试 | false：点击提交按钮正式执行
     function clickSubmit () {
         try {
             if (clickSaveBtnForTest) {
