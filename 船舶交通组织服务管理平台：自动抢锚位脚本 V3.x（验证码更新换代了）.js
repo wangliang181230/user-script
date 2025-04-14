@@ -291,8 +291,10 @@
 
         info(`切割点：${cutX}`);
 
-        const moveX = ((concatImgData.width - cutX) * ratio).toFixed();
-        info(`需移动滑块按钮 ${moveX} 像素（${concatImgData.width - cutX}）`);
+        const slideX = concatImgData.width - cutX;
+
+        const moveX = (slideX * ratio).toFixed();
+        info(`需移动滑块按钮 ${moveX} 像素（${slideX}）`);
 
         return moveX;
     }
