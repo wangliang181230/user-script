@@ -77,7 +77,7 @@
                 let submitTime = Date.now();
                 let intervalA;
                 intervalA = setInterval(() => {
-                    if (document.querySelector(".validate-code")) {
+                    if (document.querySelector(".validate-code") || !window.doing || window.stoping) {
                         clearInterval(intervalA);
                         window.doing = false;
                     } else {
