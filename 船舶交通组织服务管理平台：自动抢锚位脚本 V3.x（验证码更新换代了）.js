@@ -445,7 +445,7 @@
                     }
                 }
                 if (match) {
-                    slideX = x - 5;
+                    slideX = x - 10;
                     break;
                 }
             }
