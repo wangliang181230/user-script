@@ -327,12 +327,13 @@
     }
 
     // 判断两个点是否为颜色相似
-    function isSimilarColors (x0, r0, g0, b0, x1, r1, g1, b1, diff) {
-        if (Math.abs(r0 - r1) + Math.abs(g0 - g1) + Math.abs(b0 - b1) <= diff) {
-            //debug(`${x0 + 1}（${r0}, ${g0}, ${b0}） 与 ${x1 + 1}（${r1}, ${g1}, ${b1}） 区别较小, diff = ${diff}`);
+    function isSimilarColors (y, x0, r0, g0, b0, x1, r1, g1, b1, diff) {
+        const d = Math.abs(r0 - r1) + Math.abs(g0 - g1) + Math.abs(b0 - b1);
+        if (d <= diff) {
+            //debug(`y=${y}(${(y*0.6).toFixed()}), ${x0 + 1}(${((x0 + 1)*0.5).toFixed()})（${r0}, ${g0}, ${b0}） 与 ${x1 + 1}(${((x1 + 1)*0.5).toFixed()})（${r1}, ${g1}, ${b1}） 区别较小, d(${d}) <= diff(${diff})`);
             return true;
         } else {
-            //debug(`${x0 + 1}（${r0}, ${g0}, ${b0}） 与 ${x1 + 1}（${r1}, ${g1}, ${b1}） 区别较大, diff = ${diff}`);
+            //debug(`y=${y}(${(y*0.6).toFixed()}), ${x0 + 1}(${((x0 + 1)*0.5).toFixed()})（${r0}, ${g0}, ${b0}） 与 ${x1 + 1}(${((x1 + 1)*0.5).toFixed()})（${r1}, ${g1}, ${b1}） 区别较大, d(${d}) > diff(${diff})`);
             return false;
         }
     }
@@ -353,7 +354,7 @@
             const b1 = data[i + 4 + 2];
 
             // 判断与下一个点的颜色是否区别较大
-            if (isSimilarColors(x0, r0, g0, b0, x1, r1, g1, b1, diff)) {
+            if (isSimilarColors(startY, x0, r0, g0, b0, x1, r1, g1, b1, diff)) {
                 //debug("下一个点");
                 continue;
             }
@@ -365,7 +366,7 @@
                 const r00 = data[i - n*4];
                 const g00 = data[i - n*4 + 1];
                 const b00 = data[i - n*4 + 2];
-                if (isSimilarColors(x0, r0, g0, b0, x0-n, r00, g00, b00, diff)) {
+                if (isSimilarColors(startY, x0, r0, g0, b0, x0-n, r00, g00, b00, diff)) {
                     lCount++;
                 }
             }
@@ -373,7 +374,7 @@
                 const r11 = data[i + n*4 + 4];
                 const g11 = data[i + n*4 + 4 + 1];
                 const b11 = data[i + n*4 + 4 + 2];
-                if (isSimilarColors(x1, r1, g1, b1, x1+n, r11, g11, b11, diff)) {
+                if (isSimilarColors(startY, x1, r1, g1, b1, x1+n, r11, g11, b11, diff)) {
                     rCount++;
                 }
             }
@@ -431,7 +432,7 @@
         }
 
         // 寻找滑块该移到的位置
-        for (let x = 50; x < bgData.width; x++) {
+        for (let x = 60; x < bgData.width; x++) {
             const n = (slideY * bgData.width + x) * 4
 
             const r0 = bgData.data[n]; // 红
@@ -439,21 +440,34 @@
             const b0 = bgData.data[n + 2]; // 蓝
             //const a0 = bgData.data[n + 3]; // 透明度
 
-            if (isGray(r0, g0, b0)) {
-                let match = true;
-                for (let i = 1; i <= 40; i++) {
+            let diff = 30;
+            if (r0 < 30) diff += 35;
+            else if (r0 < 60) diff += 25;
+            else if (r0 < 90) diff += 15;
+            else if (r0 < 120) diff += 5;
+
+            if (isGray(x, slideY, r0, g0, b0)) {
+                //debug(`x=${x}(${(x*0.5).toFixed()}), y=${slideY}(${(slideY*0.6).toFixed()}))（${r0}, ${g0}, ${b0}）是灰色点`);
+
+                let unmatch = 0;
+                for (let i = 1; i <= 60; i++) {
                     const r = bgData.data[n + i * 4]; // 红
                     const g = bgData.data[n + i * 4 + 1]; // 绿
                     const b = bgData.data[n + i * 4 + 2]; // 蓝
                     //const a = bgData.data[n + 3]; // 透明度
 
-                    if (!isSimilarColors(x, r0, g0, b0, x + i, r, g, b, 30)) {
-                        match = false;
+                    if (!isGray(x + i, slideY, r, g, b) || !isSimilarColors(slideY, x, r0, g0, b0, x + i, r, g, b, diff)) {
+                        unmatch++;
+                        if (unmatch === 13) {
+                            break;
+                        }
                     }
                 }
-                if (match) {
-                    slideX = x - 10;
+                if (unmatch < 13) {
+                    slideX = x - 7;
                     break;
+                } else {
+                    //warn(`不是滑块坐标：x=${x}(${(x*0.5).toFixed()}), y=${slideY}(${(slideY*0.6).toFixed()})`); //  debug
                 }
             }
         }
@@ -473,8 +487,8 @@
         return moveX;
     }
 
-    function isGray (r, g, b) {
-        return r > 20 && r < 105 && g > 20 && g < 130 && b > 20 && b < 135;
+    function isGray (x, y, r, g, b) {
+        return r > 5 && r < 125 && g > 5 && g < 135 && b > 5 && b < 135;
     }
 
     ////////////---------------------------------------//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -640,8 +654,8 @@
                     refresh();
                 }
             } else {
-              lastCount = count;
-              lastCheckAntiJammingTime = null;
+                lastCount = count;
+                lastCheckAntiJammingTime = null;
             }
         }, 100);
 
