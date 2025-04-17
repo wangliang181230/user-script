@@ -814,8 +814,8 @@
     init();
 
     // 自动开始脚本，方便测试
-    setTimeout(() => {
-        start();
-        startAntiJamming();
-    }, 1000);
+    // setTimeout(() => {
+    //     start();
+    //     startAntiJamming();
+    // }, 1000);
 })();
