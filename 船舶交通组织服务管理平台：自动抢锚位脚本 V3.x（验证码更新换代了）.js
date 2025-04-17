@@ -22,6 +22,10 @@
     let countWord = 0;
     let startTime = null;
 
+    // 用于防止图片加载失败导致程序停止的问题
+    let lastCount = 0;
+    let lastCheckAntiJammingTime = null;
+
     function resetValues () {
         count = 0;
         hitCount = 0;
@@ -31,6 +35,9 @@
         countRotate = 0;
         countWord = 0;
         startTime = null;
+
+        lastCount = 0;
+        lastCheckAntiJammingTime = null;
     }
 
     const random = 1;
@@ -58,12 +65,12 @@
 
     // 执行中状态
     window.doing = false;
-    window.stoping = false;
+    window.stopping = false;
 
     // 检测需要执行
     async function checkDoParse () {
         const validateCode = document.querySelector(".validate-code");
-        if (window.doing || window.stoping) {
+        if (window.doing || window.stopping) {
             return;
         }
         window.doing = true;
@@ -88,7 +95,7 @@
                 let submitTime = Date.now();
                 let intervalA;
                 intervalA = setInterval(() => {
-                    if (document.querySelector(".validate-code") || !window.doing || window.stoping) {
+                    if (document.querySelector(".validate-code") || !window.doing || window.stopping) {
                         clearInterval(intervalA);
                         window.doing = false;
                     } else {
@@ -264,7 +271,7 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const ratio = 0.5;
-    const concatEnabled = false; // 是否识别上下图验证码，true：需要识别 | false：不需要识别，跳过它
+    const concatEnabled = true; // 是否识别上下图验证码，true：需要识别 | false：不需要识别，跳过它
     const sliderEnabled = true; // 是否识别抠图滑块验证码，true：需要识别 | false：不需要识别，跳过它
 
     // 解析：拼图验证码（上下图 / Concat）
@@ -557,19 +564,19 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     function refresh () {
-        if (window.stoping) {
+        if (window.stopping) {
             return false;
         }
 
         try {
-            window.stoping = true;
+            window.stopping = true;
             document.querySelector(".slider-bottom .refresh-btn").click();
 
             let intervalB
             intervalB = setInterval(() => {
                 if (document.getElementById("tianai-captcha-loading") == null || document.getElementById("tianai-captcha-loading").style.display === 'none') {
                     clearInterval(intervalB);
-                    window.stoping = false;
+                    window.stopping = false;
                 }
             }, 10);
 
@@ -577,7 +584,7 @@
             return true;
         } catch (e) {
             warn("❌ 刷新出现异常：", e);
-            window.stoping = false;
+            window.stopping = false;
             return false;
         }
     }
@@ -600,7 +607,7 @@
         window.qmwInterval = setInterval(checkDoParse, 100);
         info('---> 开始抢锚位！！！');
         window.doing = false;
-        window.stoping = false;
+        window.stopping = false;
         return true;
     }
 
@@ -611,27 +618,41 @@
         window.qmwInterval = null;
         info('<--- 停止抢锚位！！！');
         window.doing = false;
-        window.stoping = false;
+        window.stopping = false;
         return true;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    function startCheckResult () {
-        if (window.crInterval) return false;
+    // 防卡顿
+    function startAntiJamming () {
+        if (window.ajInterval) return false;
 
-        window.crInterval = setInterval(() =>{
-            //
+        window.ajInterval = setInterval(() => {
+            if (lastCount === count && document.querySelector(".slider-bottom .refresh-btn")) {
+                if (lastCheckAntiJammingTime == null) {
+                    lastCheckAntiJammingTime = Date.now();
+                } else if (Date.now() - lastCheckAntiJammingTime > 5000) { // 超过5秒count没有变更，视为卡死，刷新图片
+                    warn("❌ 检测到程序卡死，现自动刷新图片，并初始化 doing 和 stopping 两个参数");
+                    window.doing = false;
+                    window.stopping = false;
+                    lastCheckAntiJammingTime = null;
+                    refresh();
+                }
+            } else {
+              lastCount = count;
+              lastCheckAntiJammingTime = null;
+            }
         }, 100);
 
-        return window.crInterval;
+        return window.ajInterval;
     }
 
-    function stopCheckResult () {
-        if (!window.crInterval) return false;
+    function stopAntiJamming () {
+        if (!window.ajInterval) return false;
 
-        clearInterval(window.crInterval);
-        window.crInterval = null;
+        clearInterval(window.ajInterval);
+        window.ajInterval = null;
         return true;
     }
 
@@ -653,13 +674,14 @@
             if (errorMsg.indexOf('验证码错误') >= 0) {
                 warn('❌ 提交了验证码，但验证码错误，识别结果不正确：');
             } else if (errorMsg.indexOf('该锚位已在') === 0 || errorMsg.indexOf('如要申请请联系') > 0) {
-                if (window.stoping === false) {
+                if (window.stopping === false) {
                     return;
                 }
 
                 warn(`❌ 提交了验证码，但该锚位已被其他人抢走了！！！  提示信息：${errorMsg}`);
                 // 停止识别验证码
                 stop();
+                stopAntiJamming();
                 // 提示已被抢走
                 showMsg(`❌ 很遗憾，该锚位已被其他人抢走了，现已停止识别验证码，有需要时再按F2开启！！！！！！此次总计刷新了验证码图片次数：${count} 次，提交了 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒`);
 
@@ -710,12 +732,12 @@
             if (event.key === 'F2') {
                 if (window.qmwInterval) {
                     stop();
-                    stopCheckResult();
+                    stopAntiJamming();
                     showMsg('停止识别验证码', false, false, 1500);
                 } else {
                     showMsg('开始识别验证码', false, false, 1500);
                     start();
-                    startCheckResult();
+                    startAntiJamming();
                 }
             }
         });
@@ -792,5 +814,8 @@
     init();
 
     // 自动开始脚本，方便测试
-    //setTimeout(start, 1000);
+    setTimeout(() => {
+        start();
+        startAntiJamming();
+    }, 1000);
 })();
