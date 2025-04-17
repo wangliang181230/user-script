@@ -278,7 +278,7 @@
     async function doParseSlider_1_concat () {
         countConcat++;
         if (!concatEnabled) {
-            warn("❌ 已禁用 拼图验证码（上下图 / Concat）");
+            warn("已禁用 拼图验证码（上下图 / Concat）");
             refresh();
             return false;
         }
@@ -391,7 +391,7 @@
     async function doParseSlider_2_slider () {
         countSlider++;
         if (!sliderEnabled) {
-            warn("❌ 已禁用 拼图验证码（抠图滑块 / Slider）");
+            warn("已禁用 拼图验证码（抠图滑块 / Slider）");
             refresh();
             return false;
         }
@@ -403,7 +403,7 @@
 
         const isImage2 = bgData.data[0] < 100;
         if (isImage2) {
-            warn("❌ 暂不支持当前深色背景图片的 拼图验证码（抠图滑块 / Slider）");
+            warn("暂不支持当前深色背景图片的 拼图验证码（抠图滑块 / Slider）");
             refresh();
             return false;
         }
