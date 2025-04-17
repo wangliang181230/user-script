@@ -496,7 +496,7 @@
     // 解析：拼图验证码（旋转）
     async function doParseSlider_3_rotate () {
         countRotate++;
-        warn("❌ 暂不支持 拼图验证码（旋转 / Rotate）");
+        warn("暂不支持 拼图验证码（旋转 / Rotate）");
         refresh();
         return false;
     }
@@ -506,7 +506,7 @@
     // 解析：点击文字验证码
     function doParseWordImageClick () {
         countWord++;
-        warn("❌ 暂不支持 点击文字验证码");
+        warn("暂不支持 点击文字验证码");
         refresh();
         return false;
     }
