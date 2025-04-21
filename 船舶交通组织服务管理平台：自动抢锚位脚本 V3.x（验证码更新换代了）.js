@@ -14,12 +14,14 @@
     'use strict';
 
     let count = 0;
-    let hitCount = 0;
-    let missCount = 0;
     let countConcat = 0;
     let countSlider = 0;
     let countRotate = 0;
     let countWord = 0;
+
+    let hitCount = 0;
+    let missCount = 0;
+
     let startTime = null;
 
     // 用于防止图片加载失败导致程序停止的问题
@@ -28,12 +30,14 @@
 
     function resetValues () {
         count = 0;
-        hitCount = 0;
-        missCount = 0;
         countConcat = 0;
         countSlider = 0;
         countRotate = 0;
         countWord = 0;
+
+        hitCount = 0;
+        missCount = 0;
+
         startTime = null;
 
         lastCount = 0;
@@ -51,7 +55,6 @@
                 // 正式提交：点击提交按钮
                 document.querySelector(".btn-submit").click();
             }
-            count++;
             return true;
         } catch (e) {
             if (!e.message.includes(" is null")) {
@@ -211,13 +214,13 @@
         hitCount++;
 
         const captchaBox = document.getElementById("captchaBox");
-        if (captchaBox && captchaBox.innerHTML.trim() === "") {
-            return;
+        if (!captchaBox || captchaBox.innerHTML.trim() === "") {
+            return false;
         }
 
         let moveBtn0 = document.getElementById('tianai-captcha-slider-move-btn');
         if (!moveBtn0) {
-            return;
+            return false;
         }
 
         // 起始坐标
@@ -236,7 +239,7 @@
         for (let i = 0; i <= lastStep; i++) { // 加随机次数是为了模拟终点漂浮不定的效果，避免被判定为破解程序
             if (!window.doing || captchaBox.innerHTML.trim() === "") {
                 warn("❌ <---------- 因状态异常，停止移动滑块");
-                return;
+                return false;
             }
 
             currentX = startX + (targetX * (i > steps ? steps : i) / steps) + (i >= steps - 20 ? random * (Math.random() * 4 - 2) : 0);
@@ -246,7 +249,7 @@
             } catch (e) {
                 const moveBtnNew = document.getElementById('tianai-captcha-slider-move-btn');
                 if (moveBtnNew == null) {
-                    return;
+                    return false;
                 }
 
                 warn("❌ 移动滑块出现异常，重置滑块moveBtn、startX、startY");
@@ -266,6 +269,8 @@
         setTimeout(function () {
             checkMoveBtn();
         }, 2000);
+
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,6 +282,7 @@
     // 解析：拼图验证码（上下图 / Concat）
     async function doParseSlider_1_concat () {
         countConcat++;
+        count++;
         if (!concatEnabled) {
             warn("已禁用 拼图验证码（上下图 / Concat）");
             refresh();
@@ -390,6 +396,7 @@
     // 解析：拼图验证码（滑块）
     async function doParseSlider_2_slider () {
         countSlider++;
+        count++;
         if (!sliderEnabled) {
             warn("已禁用 拼图验证码（抠图滑块 / Slider）");
             refresh();
@@ -496,6 +503,7 @@
     // 解析：拼图验证码（旋转）
     async function doParseSlider_3_rotate () {
         countRotate++;
+        count++;
         warn("暂不支持 拼图验证码（旋转 / Rotate）");
         refresh();
         return false;
@@ -506,6 +514,7 @@
     // 解析：点击文字验证码
     function doParseWordImageClick () {
         countWord++;
+        count++;
         warn("暂不支持 点击文字验证码");
         refresh();
         return false;
@@ -594,7 +603,6 @@
                 }
             }, 10);
 
-            count++;
             return true;
         } catch (e) {
             warn("❌ 刷新出现异常：", e);
