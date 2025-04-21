@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抢锚位⚓️
 // @namespace    http://tampermonkey.net/
-// @version      3.0.1
+// @version      3.0.2
 // @description  给朋友编写的一个脚本，自动化抢锚位的工作。
 // @author       王良
 // @match        https://zkpt.zj.msa.gov.cn/*
