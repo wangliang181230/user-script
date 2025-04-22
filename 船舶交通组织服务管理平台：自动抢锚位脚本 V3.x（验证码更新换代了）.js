@@ -682,40 +682,37 @@
 
     function checkMoveBtn () {
         if (document.querySelector('p.after-title')) {
-            checkResult();
-            return true;
+            return checkResult();
         }
 
         const errorMsgElement = document.querySelector('.ant-message .ant-message-error');
         if (errorMsgElement) {
-            const errorMsg = errorMsgElement.innerText;
-            if (!errorMsg) {
+            return false; // 未找到成功或失败的提示信息
+        }
+
+        const errorMsg = errorMsgElement.innerText;
+        if (!errorMsg) {
+            return false;
+        }
+
+        if (errorMsg.includes('该锚位已在') || errorMsg.includes('如要申请请联系')) {
+            if (window.stopping === false) {
                 return false;
             }
 
-            if (errorMsg.indexOf('验证码错误') >= 0) {
-                warn('❌ 提交了验证码，但验证码错误，识别结果不正确：');
-            } else if (errorMsg.indexOf('该锚位已在') === 0 || errorMsg.indexOf('如要申请请联系') > 0) {
-                if (window.stopping === false) {
-                    return;
-                }
+            warn(`❌ 提交了验证码，但该锚位已被其他人抢走了！！！  提示信息：${errorMsg}`);
+            // 停止识别验证码
+            stop();
+            stopAntiJamming();
+            // 提示已被抢走
+            showMsg(`❌ 很遗憾，该锚位已被其他人抢走了，现已停止识别验证码，有需要时再按F2开启！！！！！！总计刷新了验证码图片：${count} 次，提交了 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒`);
 
-                warn(`❌ 提交了验证码，但该锚位已被其他人抢走了！！！  提示信息：${errorMsg}`);
-                // 停止识别验证码
-                stop();
-                stopAntiJamming();
-                // 提示已被抢走
-                showMsg(`❌ 很遗憾，该锚位已被其他人抢走了，现已停止识别验证码，有需要时再按F2开启！！！！！！总计刷新了验证码图片：${count} 次，提交了 ${hitCount} 次，总计耗时：${(Date.now() - startTime) / 1000} 秒`);
-
-                resetValues();
-            } else {
-                warn(`❌ 提交了验证码，但失败了，错误信息：${errorMsg}`);
-            }
-
-            return true;
+            resetValues();
         } else {
-            return false; // 未找到成功或失败的提示信息
+            warn(`❌ 提交了验证码，但失败了，错误信息：${errorMsg}`);
         }
+
+        return true;
     }
 
     function checkResult () {
