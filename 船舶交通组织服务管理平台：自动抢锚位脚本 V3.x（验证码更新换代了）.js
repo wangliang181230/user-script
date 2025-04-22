@@ -111,8 +111,8 @@
                 }, 100);
                 return;
             }
-        } else {
-            checkResult()
+        } else if (document.querySelector('p.after-title')) {
+            checkResult();
         }
 
         window.doing = false;
@@ -722,7 +722,7 @@
         let logFun;
 
         const successElement = document.querySelector('p.after-title');
-        if (successElement && successElement.innerText && successElement.innerText.indexOf('成功') > 0) {
+        if (successElement && successElement.innerText && successElement.innerText.includes('成功')) {
             title = '✅ 抢锚位成功啦！！！';
             logFun = showMsg;
         } else {
